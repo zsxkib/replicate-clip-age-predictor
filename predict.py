@@ -2,8 +2,7 @@ import clip
 import torch
 import numpy as np
 from PIL import Image
-from typing import Any, Union
-from replicate import BasePredictor, Input, Path
+from cog import BasePredictor, Input, Path
 
 
 AGES = list(range(1, 100))
@@ -23,9 +22,9 @@ class Predictor(BasePredictor):
         >>> p.setup()
         """
 
-        self.device: str = "cuda" if torch.cuda.is_available() else "cpu"
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.model, self.preprocess = clip.load("ViT-B/32", device=self.device, jit=False)
-        texts: list = [f"this person is {age} years old" for age in AGES]
+        texts = [f"this person is {age} years old" for age in AGES]
         prompts = clip.tokenize(texts).to(self.device)
         with torch.no_grad():
             self.prompt_features = self.model.encode_text(prompts)
@@ -59,7 +58,9 @@ class Predictor(BasePredictor):
 
         return (100.0 * image_features @ prompt_features.T).softmax(dim=-1).detach().cpu().numpy()
 
-    def predict(self, image: Path = Input(description="Input image of the person's age we'd like to predict")) -> str:
+    def predict(
+        self, image: Path = Input(description="Input image of the person's age we'd like to predict")
+    ) -> str:
         """
         Predict the age of the person in the provided image.
 
