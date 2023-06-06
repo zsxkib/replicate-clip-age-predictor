@@ -23,7 +23,7 @@ build:
     - "pillow==8.3.2"
 
   # commands run after the enviroment is setup
-  run:
+  # run:
     # - "echo env is ready!"
     # - "echo another command if needed"
 
