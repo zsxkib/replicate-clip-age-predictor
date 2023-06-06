@@ -1,8 +1,6 @@
 # Configuration for Cog ⚙️
 # Reference: https://github.com/replicate/cog/blob/main/docs/yaml.md
 
-image: r8.im/andreasjansson/clip-age-predictor
-
 build:
   # set to true if your model requires a GPU
   gpu: true
