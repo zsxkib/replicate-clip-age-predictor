@@ -1,11 +1,13 @@
 # **CLIP Age Predictor 📸⏳**
 
-Welcome to the **CLIP Age Predictor**! 👋 This Python-based project is a reimagination of a prior implementation found at [replicate.com/andreasjansson/clip-age-predictor](https://replicate.com/andreasjansson/clip-age-predictor). Due to some compatibility issues, we took the baton and brought it to the finish line, ensuring it's up-to-date with the latest libraries and frameworks. 👩‍💻
+Welcome to the **CLIP Age Predictor**! 👋 This project is a reimagination of a prior implementation of [clip-age-predictor by Andreas Jansson](https://replicate.com/andreasjansson/clip-age-predictor). Due to some compatibility issues, we've updated it to work ensuring it's up-to-date with the latest libraries and frameworks. 👩‍💻
 
 We no longer get the error:<br>
 """<br>
 😵 *Uh oh! This model can't be run on Replicate because it was built with a version of Cog that is no longer supported. Consider opening an issue on the model's GitHub repository to see if it can be updated to use a recent version of Cog. If you need any help, please hop into our Discord channel or email us about it.*<br>
 """
+
+**Just upload a picture and hit `"Submit"`!** 📸
 
 ## What Does This Code Do? 🧐
 
@@ -23,23 +25,31 @@ Here's the breakdown:
 
 Cosine similarity measures the cosine of the angle between two vectors. This value can range from -1 to 1, indicating complete oppositeness and perfect similarity, respectively. We're exploiting the fact that when vectors are similar (meaning they point in roughly the same direction), their cosine similarity approaches 1.
 
-Applying this to our scenario, we're comparing the 'direction' or 'meaning' captured by our image with the 'directions' or 'meanings' of our age prompts. If the image aligns more closely with the vector for "this person is 25 years old" than any other prompt, we get a high cosine similarity, indicating that the person in the image is likely around 25 years old!
+Applying this to our scenario, we're comparing the 'direction' or 'meaning' captured by our image with the 'directions' or 'meanings' of our age prompts. If the image aligns more closely with the vector for "this person is 22 years old" than any other prompt, we get a high cosine similarity, indicating that the person in the image is likely around 22 years old!
 
 ## Under the Hood: CLIP and Contrastive Losses 🧠🔧
 
-CLIP (Contrastive Language–Image Pretraining) is a unique model created by OpenAI, adept at understanding and associating images and text. Instead of training the model using traditional loss functions, CLIP employs 'contrastive losses', an innovative approach that significantly boosts the model's generalizability.
+OpenAI's CLIP (Contrastive Language–Image Pretraining) is a groundbreaking model that excels at deciphering the interplay between images and text. But what sets it apart from other models is its usage of 'contrastive losses' – an innovative strategy that refines the model's capability to generalize and understand data.
 
-But what exactly is a contrastive loss?
+Let's peel back the layers to understand what contrastive loss really entails.
 
 ![Contrastive Pretraining](https://miro.medium.com/v2/resize:fit:1400/format:webp/1*tz_yyNvvna59tYDoqD4CUg.png)
 
-Think of contrastive losses as a guiding hand that steers the model during training. They encourage the model to pull together related items (positive pairs like an image and its corresponding text) while pushing apart unrelated ones (negative pairs like an image and a random text). This is done by minimizing the distance between positive pairs and maximizing the distance between negative pairs in the embedding space.
+At its core, contrastive losses function like a compass for the model during its training journey. It's a distinctive loss function that excels in representation and self-supervised learning tasks. The primary aim here is to learn representations that draw similar instances closer (an image and its relevant text) while driving dissimilar instances apart (like an image paired with a random unrelated text).
 
-Unlike classic ImageNet-style loss functions that treat each classification problem independently, contrastive losses teach the model a more comprehensive understanding of the data. The model isn't just looking at individual images or texts; it's learning to perceive the broader relationships between text and image data. This capacity to grasp context, draw analogies, and comprehend abstract concepts makes CLIP an ideal candidate for tasks like age prediction.
+The above image essentially portrays a similarity matrix, with each cell signifying the degree of similarity or difference between two instances (image and text). These instances are represented as embeddings within a high-dimensional space.
 
-By training CLIP with a vast array of internet text–image pairs, the model has learned to create accurate mappings between images and a large space of textual descriptions, making it a powerful tool for tasks that require understanding of images in relation to text prompts. 
+Let's dive deeper:
 
-In our age predictor, we leverage this ability of CLIP to gauge the 'similarity' between an image and our age-related text prompts. This forms the core of our model's age prediction mechanism, displaying the strength and versatility of contrastive learning methods in practical applications.
+- **The Matrix:** The square matrix in the image signifies the relationships among diverse instances in our dataset. Every row and column equates to a unique instance in the dataset – images and sentences (alt tags from the internet).
+
+- **Positive Pairs (Diagonal Elements):** Diagonal elements of the matrix denote 'positive pairs'. These are pairs of instances considered similar or related. For instance, in an image-caption dataset, a positive pair could be an image and its accurate caption. The objective is to minimize the distance between these pairs in the embedding space, thereby aligning similar items more closely.
+
+- **Negative Pairs (Non-Diagonal Elements):** Non-diagonal elements of the matrix signify the 'negative pairs'. These pairs consist of instances considered dissimilar or unrelated. In an image-caption scenario, a negative pair could be an image and an unrelated caption. The goal here is to maximize the distance between these pairs in the embedding space, pushing dissimilar items further apart.
+
+During the training phase, the model is fine-tuned to enhance the similarity of positive pairs while expanding the dissimilarity between negative pairs. This simultaneous push-and-pull dynamic, regulated by the contrastive loss function, facilitates the learning of more robust and discriminative representations.
+
+Contrary to traditional ImageNet-style loss functions, which handle each classification problem independently, contrastive losses impart a more holistic understanding of data to the model. Instead of just processing individual images or texts, the model learns to comprehend the underlying relationships within the text-image data constellation. This ability to grasp the context, discern analogies, and understand abstract concepts positions CLIP as an ideal choice for tasks like age prediction!
 
 ## The Art and Science of Predicting Age 🎨⚗️
 
